@@ -7,7 +7,7 @@ extends Node2D
 @onready var boss_value: Label = $CanvasLayer/HUD/BossValue
 @onready var status_label: Label = $CanvasLayer/HUD/Status
 
-var wave_types := ["Grunt", "Scout", "Heavy", "Sniper", "Runner"]
+var enemy_types := ["Grunt", "Scout", "Heavy", "Sniper", "Runner"]
 var spawn_points := [
     Vector2(420, 560),
     Vector2(580, 560),
@@ -25,7 +25,7 @@ func _ready() -> void:
     boss_value.text = str(boss.health)
     status_label.text = "Battle on!"
 
-    _spawn_wave()
+    _spawn_enemy_wave()
     player.died.connect(_on_player_died)
     boss.boss_defeated.connect(_on_boss_defeated)
 
@@ -48,12 +48,12 @@ func _process(_delta: float) -> void:
     else:
         status_label.text = "Victory!"
 
-func _spawn_wave() -> void:
-    for index in range(wave_types.size()):
-        var enemy_scene: PackedScene = preload("res://scenes/Enemy.tscn")
+func _spawn_enemy_wave() -> void:
+    var enemy_scene: PackedScene = preload("res://scenes/Enemy.tscn")
+    for i in range(enemy_types.size()):
         var enemy = enemy_scene.instantiate()
-        enemy.enemy_type = wave_types[index]
-        enemy.position = spawn_points[index]
+        enemy.enemy_type = enemy_types[i]
+        enemy.position = spawn_points[i]
         add_child(enemy)
 
 func _on_player_died() -> void:

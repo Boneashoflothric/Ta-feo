@@ -1,71 +1,95 @@
-extends CharacterBody2D
+[gd_scene load_steps=2 format=3]
 
-signal boss_defeated
+[ext_resource type="Script" path="res://scripts/MainMenu.gd" id="1_7mhqv"]
 
-const GROUND_Y := 470.0
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7mhqv")
 
-var health := 220
-var max_health := 220
-var speed := 110.0
-var attack_timer := 0.0
-var phase := 1
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.12, 0.20, 1)
 
-func _ready() -> void:
-    add_to_group("boss")
-    $Body.color = Color(0.86, 0.16, 0.32)
-    $Core.color = Color(1.0, 0.80, 0.12)
-    attack_timer = 0.6
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(540, 360)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -270.0
+offset_top = -180.0
+offset_right = 270.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
 
-func _physics_process(delta: float) -> void:
-    if health <= 0:
-        return
+[node name="Title" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 30.0
+offset_right = 180.0
+offset_bottom = 110.0
+grow_horizontal = 2
+text = "TA-FEO"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-    var player = get_tree().get_first_node_in_group("player")
-    if player == null or not is_instance_valid(player):
-        return
+[node name="Subtitle" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -220.0
+offset_top = 100.0
+offset_right = 220.0
+offset_bottom = 155.0
+grow_horizontal = 2
+text = "Operation: Break the Steel Bastion"
+horizontal_alignment = 1
 
-    attack_timer -= delta
-    if attack_timer <= 0.0:
-        do_attack(player)
-        attack_timer = 0.85 if phase == 1 else 0.55
+[node name="NameLabel" type="Label" parent="Panel"]
+layout_mode = 1
+offset_left = 80.0
+offset_top = 175.0
+offset_right = 220.0
+offset_bottom = 210.0
+text = "Callsign:"
 
-    var direction := sign(player.global_position.x - global_position.x)
-    var distance := abs(player.global_position.x - global_position.x)
+[node name="NameInput" type="LineEdit" parent="Panel"]
+layout_mode = 1
+offset_left = 220.0
+offset_top = 170.0
+offset_right = 440.0
+offset_bottom = 215.0
+text = "Ta-feo"
+max_length = 16
 
-    if distance > 160.0:
-        velocity.x = direction * speed
-    else:
-        velocity.x = 0.0
-
-    if global_position.y < GROUND_Y:
-        velocity.y += 1200.0 * delta
-    else:
-        global_position.y = GROUND_Y
-        velocity.y = 0.0
-
-    move_and_slide()
-
-func do_attack(player: Node) -> void:
-    if player.has_method("take_damage"):
-        player.take_damage(12 if phase == 1 else 16)
-
-    if health < max_health * 0.5:
-        phase = 2
-        spawn_support()
-
-func spawn_support() -> void:
-    var enemy_scene: PackedScene = preload("res://scenes/Enemy.tscn")
-    for index in range(2):
-        var enemy = enemy_scene.instantiate()
-        enemy.enemy_type = "Runner" if index % 2 == 0 else "Scout"
-        enemy.position = global_position + Vector2(120 * (index + 1) * (-1 if index == 0 else 1), -30)
-        get_parent().add_child(enemy)
-
-func take_damage(amount: int) -> void:
-    if health <= 0:
-        return
-    health -= amount
-    if health <= 0:
-        health = 0
-        emit_signal("boss_defeated")
-        queue_free()
+[node name="StartButton" type="Button" parent="Panel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -85.0
+offset_top = -95.0
+offset_right = 85.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "START MISSION"

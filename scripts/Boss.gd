@@ -1,73 +1,18 @@
 extends CharacterBody2D
 
-@export var enemy_type := "Grunt"
+signal boss_defeated
 
-var health := 8
-var speed := 80.0
-var damage := 8
-var attack_range := 180.0
-var attack_cooldown := 1.2
-var current_cooldown := 0.0
+const GROUND_Y := 470.0
+
+var health := 220
+var max_health := 220
+var speed := 110.0
+var attack_timer := 0.0
+var phase := 1
 
 func _ready() -> void:
-    add_to_group("enemies")
-    _apply_enemy_type(enemy_type)
-    $Body.color = _type_color(enemy_type)
-    $Body.scale.x = -1.0
-
-func _apply_enemy_type(type_name: String) -> void:
-    match type_name:
-        "Grunt":
-            health = 8
-            speed = 85.0
-            damage = 8
-            attack_range = 170.0
-            attack_cooldown = 1.3
-        "Scout":
-            health = 5
-            speed = 130.0
-            damage = 6
-            attack_range = 150.0
-            attack_cooldown = 0.9
-        "Heavy":
-            health = 14
-            speed = 55.0
-            damage = 14
-            attack_range = 200.0
-            attack_cooldown = 1.7
-        "Sniper":
-            health = 7
-            speed = 60.0
-            damage = 12
-            attack_range = 300.0
-            attack_cooldown = 2.0
-        "Runner":
-            health = 6
-            speed = 160.0
-            damage = 7
-            attack_range = 150.0
-            attack_cooldown = 0.8
-        _:
-            health = 8
-            speed = 85.0
-            damage = 8
-            attack_range = 170.0
-            attack_cooldown = 1.3
-
-func _type_color(type_name: String) -> Color:
-    match type_name:
-        "Grunt":
-            return Color(0.85, 0.45, 0.35)
-        "Scout":
-            return Color(0.82, 0.78, 0.20)
-        "Heavy":
-            return Color(0.52, 0.72, 0.96)
-        "Sniper":
-            return Color(0.95, 0.70, 0.18)
-        "Runner":
-            return Color(0.34, 0.82, 0.52)
-        _:
-            return Color(0.95, 0.95, 0.95)
+    add_to_group("boss")
+    attack_timer = 0.6
 
 func _physics_process(delta: float) -> void:
     if health <= 0:
@@ -77,31 +22,42 @@ func _physics_process(delta: float) -> void:
     if player == null or not is_instance_valid(player):
         return
 
-    current_cooldown = max(0.0, current_cooldown - delta)
+    attack_timer -= delta
+    if attack_timer <= 0.0:
+        do_attack(player)
+        attack_timer = 0.85 if phase == 1 else 0.55
 
     var direction := sign(player.global_position.x - global_position.x)
-    var player_distance := abs(player.global_position.x - global_position.x)
+    var distance := abs(player.global_position.x - global_position.x)
 
-    if player_distance > 35.0:
+    if distance > 160.0:
         velocity.x = direction * speed
     else:
         velocity.x = 0.0
 
-    if player_distance < attack_range and abs(player.global_position.y - global_position.y) < 90.0:
-        if current_cooldown <= 0.0:
-            attack_player(player)
-            current_cooldown = attack_cooldown
+    if global_position.y < GROUND_Y:
+        velocity.y += 1200.0 * delta
     else:
+        global_position.y = GROUND_Y
         velocity.y = 0.0
-
-    if direction != 0:
-        $Body.scale.x = -1.0 if direction < 0 else 1.0
 
     move_and_slide()
 
-func attack_player(player: Node) -> void:
+func do_attack(player: Node) -> void:
     if player.has_method("take_damage"):
-        player.take_damage(damage)
+        player.take_damage(12 if phase == 1 else 16)
+
+    if health < max_health * 0.5:
+        phase = 2
+        spawn_support()
+
+func spawn_support() -> void:
+    var enemy_scene: PackedScene = preload("res://scenes/Enemy.tscn")
+    for i in range(2):
+        var enemy = enemy_scene.instantiate()
+        enemy.enemy_type = "Runner" if i % 2 == 0 else "Scout"
+        enemy.position = global_position + Vector2(120 * (i + 1) * (-1 if i == 0 else 1), -30)
+        get_parent().add_child(enemy)
 
 func take_damage(amount: int) -> void:
     if health <= 0:
@@ -109,4 +65,26 @@ func take_damage(amount: int) -> void:
     health -= amount
     if health <= 0:
         health = 0
+        emit_signal("boss_defeated")
         queue_free()
+
+func _draw() -> void:
+    var jacket := Color(0.18, 0.20, 0.25)
+    var jacket_dark := Color(0.09, 0.10, 0.12)
+    var red := Color(0.92, 0.18, 0.18)
+    var skin := Color(0.82, 0.60, 0.46)
+    var hair := Color(0.29, 0.17, 0.10)
+    var pants := Color(0.15, 0.17, 0.20)
+    var shoes := Color(0.09, 0.08, 0.08)
+
+    draw_rect(Rect2(-58, -52, 116, 96), jacket)
+    draw_rect(Rect2(-62, -36, 124, 26), jacket_dark)
+    draw_rect(Rect2(-14, -62, 28, 18), skin)
+    draw_rect(Rect2(-18, -66, 36, 14), hair)
+    draw_rect(Rect2(-22, -34, 12, 38), red)
+    draw_rect(Rect2(10, -34, 12, 38), red)
+    draw_rect(Rect2(-22, -8, 44, 8), red)
+    draw_rect(Rect2(-18, 2, 14, 46), pants)
+    draw_rect(Rect2(4, 2, 14, 46), pants)
+    draw_rect(Rect2(-22, 48, 18, 14), shoes)
+    draw_rect(Rect2(4, 48, 18, 14), shoes)

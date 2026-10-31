@@ -1,3 +1,3 @@
 extends Node
 
-var player_name := "Ta-feo"
+var player_name: String = "Ta-feo"
