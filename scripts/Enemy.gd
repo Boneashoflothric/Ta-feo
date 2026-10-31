@@ -56,13 +56,13 @@ func _physics_process(delta: float) -> void:
     if health <= 0:
         return
 
-    var player = get_tree().get_first_node_in_group("player")
+    var player: Node2D = get_tree().get_first_node_in_group("player")
     if player == null or not is_instance_valid(player):
         return
 
     current_cooldown = max(0.0, current_cooldown - delta)
-    var direction := sign(player.global_position.x - global_position.x)
-    var player_dist := abs(player.global_position.x - global_position.x)
+    var direction: float = sign(player.global_position.x - global_position.x)
+    var player_dist: float = abs(player.global_position.x - global_position.x)
 
     if player_dist > 30.0:
         velocity.x = direction * speed
