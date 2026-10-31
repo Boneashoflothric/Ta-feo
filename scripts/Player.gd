@@ -53,7 +53,7 @@ func shoot() -> void:
     fire_timer = 0.18
 
     var bullet_scene: PackedScene = preload("res://scenes/Bullet.tscn")
-    var bullet = bullet_scene.instantiate()
+    var bullet: Node2D = bullet_scene.instantiate()
     bullet.position = global_position + Vector2(24 * facing, -4)
     bullet.direction = Vector2(facing, 0)
     bullet.damage = 10
@@ -73,17 +73,17 @@ func take_damage(amount: int) -> void:
         queue_free()
 
 func _draw() -> void:
-    var cloak_dark := Color(0.22, 0.17, 0.12)
-    var cloak_mid := Color(0.36, 0.30, 0.24)
-    var cloak_shadow := Color(0.10, 0.09, 0.08)
-    var tunic := Color(0.20, 0.39, 0.26)
-    var tunic_dark := Color(0.10, 0.20, 0.14)
-    var skin := Color(0.82, 0.62, 0.46)
-    var hair := Color(0.21, 0.14, 0.08)
-    var belt := Color(0.34, 0.22, 0.12)
-    var pants := Color(0.51, 0.35, 0.21)
-    var boots := Color(0.10, 0.08, 0.07)
-    var accent := Color(0.87, 0.56, 0.22)
+    var cloak_dark := Color(0.22, 0.18, 0.12)
+    var cloak_mid := Color(0.37, 0.30, 0.23)
+    var cloak_shadow := Color(0.09, 0.08, 0.08)
+    var tunic := Color(0.19, 0.38, 0.25)
+    var tunic_dark := Color(0.08, 0.19, 0.14)
+    var skin := Color(0.84, 0.64, 0.47)
+    var hair := Color(0.20, 0.13, 0.08)
+    var belt := Color(0.32, 0.21, 0.12)
+    var pants := Color(0.53, 0.35, 0.20)
+    var boots := Color(0.10, 0.07, 0.06)
+    var accent := Color(0.90, 0.58, 0.20)
 
     draw_rect(Rect2(-20, -54, 40, 18), cloak_dark)
     draw_rect(Rect2(-30, -44, 60, 12), cloak_mid)
@@ -95,7 +95,7 @@ func _draw() -> void:
     draw_rect(Rect2(-10, -48, 20, 14), skin)
     draw_rect(Rect2(-12, -50, 24, 14), hair)
 
-    draw_rect(Rect2(-6, -46, 12, 8), skin)
+    draw_rect(Rect2(-8, -46, 16, 8), skin)
     draw_rect(Rect2(-8, -24, 6, 26), pants)
     draw_rect(Rect2(2, -24, 6, 26), pants)
     draw_rect(Rect2(-12, 2, 10, 18), boots)
@@ -107,7 +107,6 @@ func _draw() -> void:
 
     draw_rect(Rect2(-16, -42, 32, 2), accent)
     draw_rect(Rect2(-12, -52, 24, 2), accent)
-
     draw_rect(Rect2(-6, -50, 2, 8), Color(0.10, 0.08, 0.07))
     draw_rect(Rect2(4, -50, 2, 8), Color(0.10, 0.08, 0.07))
     draw_rect(Rect2(-14, -44, 28, 6), cloak_shadow)
