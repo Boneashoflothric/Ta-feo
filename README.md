@@ -1,18 +1,13 @@
 # Ta-feo
 
-A fuller Godot 4 prototype inspired by classic run-and-gun action games.
+A fuller Godot 4 action demo inspired by classic run-and-gun shooters.
 
 Features:
-- Main menu and player naming screen
-- One playable hero: Ta-feo
-- Five enemy archetypes
-- One boss arena with a boss encounter
-- Single-level combat loop with a win/lose flow
-- Simple arcade HUD and presentation
+- Main menu with name pick
+- Single playable hero: Ta-feo
+- 5 enemy types
+- One boss fight arena
+- Player weapon firing with projectiles
+- Health, boss status, and restart flow
 
-How to run:
-1. Open this folder in Godot 4.
-2. Open the project.
-3. Press F5 or run the project.
-
-The project starts at the main menu, where the player can enter a name before entering the battle.
+Open this folder in Godot 4 and press F5 to run.

@@ -6,8 +6,9 @@ extends Control
 func _ready() -> void:
     name_input.text = Global.player_name
     start_button.pressed.connect(_start_game)
+    name_input.text_submitted.connect(_start_game)
 
-func _start_game() -> void:
+func _start_game(_text: String = "") -> void:
     var chosen_name := name_input.text.strip_edges()
     if chosen_name == "":
         chosen_name = "Ta-feo"

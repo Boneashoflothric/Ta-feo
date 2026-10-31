@@ -52,19 +52,12 @@ func shoot() -> void:
         return
     fire_timer = 0.18
 
-    var closest: Node = null
-    var closest_dist := INF
-    for enemy in get_tree().get_nodes_in_group("enemies"):
-        if enemy == null or not is_instance_valid(enemy):
-            continue
-        var dist := global_position.distance_to(enemy.global_position)
-        var in_front := (enemy.global_position.x - global_position.x) * facing > 0.0
-        var in_height_range := abs(enemy.global_position.y - global_position.y) < 100.0
-        if in_front and in_height_range and dist < 360.0 and dist < closest_dist:
-            closest = enemy
-            closest_dist = dist
-    if closest != null and closest.has_method("take_damage"):
-        closest.take_damage(3)
+    var bullet_scene: PackedScene = preload("res://scenes/Bullet.tscn")
+    var bullet = bullet_scene.instantiate()
+    bullet.position = global_position + Vector2(24 * facing, -4)
+    bullet.direction = Vector2(facing, 0)
+    bullet.damage = 10
+    get_parent().add_child(bullet)
 
 func take_damage(amount: int) -> void:
     if health <= 0:
@@ -89,17 +82,16 @@ func _draw() -> void:
     var shoes := Color(0.10, 0.09, 0.09)
 
     draw_rect(Rect2(-18, -46, 36, 48), jacket)
-    draw_rect(Rect2(-22, -28, 44, 26), jacket_dark)
-    draw_rect(Rect2(-8, -54, 16, 14), skin)
-    draw_rect(Rect2(-12, -56, 24, 10), hair)
-    draw_rect(Rect2(-10, -67, 20, 12), hair)
-    draw_rect(Rect2(-18, -32, 10, 36), red)
-    draw_rect(Rect2(8, -32, 10, 36), red)
+    draw_rect(Rect2(-20, -28, 40, 24), jacket_dark)
+    draw_rect(Rect2(-8, -56, 16, 14), skin)
+    draw_rect(Rect2(-12, -58, 24, 12), hair)
+    draw_rect(Rect2(-18, -30, 10, 34), red)
+    draw_rect(Rect2(8, -30, 10, 34), red)
     draw_rect(Rect2(-10, -10, 8, 34), pants)
     draw_rect(Rect2(2, -10, 8, 34), pants)
     draw_rect(Rect2(-12, 22, 10, 14), shoes)
     draw_rect(Rect2(2, 22, 10, 14), shoes)
-    draw_rect(Rect2(-18, -20, 6, 14), jacket_dark)
-    draw_rect(Rect2(12, -20, 6, 14), jacket_dark)
+    draw_rect(Rect2(-22, -18, 6, 16), jacket_dark)
+    draw_rect(Rect2(16, -18, 6, 16), jacket_dark)
     draw_rect(Rect2(-4, -46, 8, 12), skin)
-    draw_rect(Rect2(-12, -4, 24, 8), red)
+    draw_rect(Rect2(-12, -6, 24, 8), red)

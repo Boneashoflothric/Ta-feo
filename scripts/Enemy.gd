@@ -101,10 +101,9 @@ func _draw() -> void:
     var shoes := Color(0.08, 0.08, 0.08)
 
     draw_rect(Rect2(-18, -46, 36, 48), jacket)
-    draw_rect(Rect2(-22, -28, 44, 22), jacket_dark)
+    draw_rect(Rect2(-22, -28, 44, 24), jacket_dark)
     draw_rect(Rect2(-8, -54, 16, 14), skin)
     draw_rect(Rect2(-12, -56, 24, 10), hair)
-    draw_rect(Rect2(-10, -67, 20, 12), hair)
     draw_rect(Rect2(-18, -32, 10, 34), red)
     draw_rect(Rect2(8, -32, 10, 34), red)
     draw_rect(Rect2(-10, -10, 8, 34), pants)

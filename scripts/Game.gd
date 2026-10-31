@@ -30,23 +30,28 @@ func _ready() -> void:
     boss.boss_defeated.connect(_on_boss_defeated)
 
 func _process(_delta: float) -> void:
-    if not is_instance_valid(player):
-        return
+    if is_instance_valid(player):
+        health_value.text = str(max(0, player.health))
+    else:
+        health_value.text = "0"
 
-    health_value.text = str(max(0, player.health))
     if is_instance_valid(boss):
         boss_value.text = str(max(0, boss.health))
     else:
         boss_value.text = "DEFEATED"
 
-    if player.health <= 0:
+    if player != null and is_instance_valid(player) and player.health <= 0:
         status_label.text = "Mission failed."
     elif is_instance_valid(boss) and boss.health < boss.max_health * 0.5:
         status_label.text = "Boss enraged!"
     elif is_instance_valid(boss):
         status_label.text = "Fire on the boss!"
-    else:
+    elif not is_instance_valid(boss):
         status_label.text = "Victory!"
+
+    if Input.is_action_just_pressed("ui_accept"):
+        if not is_instance_valid(player) or player.health <= 0:
+            get_tree().reload_current_scene()
 
 func _spawn_enemy_wave() -> void:
     var enemy_scene: PackedScene = preload("res://scenes/Enemy.tscn")
