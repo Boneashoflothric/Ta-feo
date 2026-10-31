@@ -18,7 +18,7 @@ func _physics_process(delta: float) -> void:
     if health <= 0:
         return
 
-    var player = get_tree().get_first_node_in_group("player")
+    var player: CharacterBody2D = get_tree().get_first_node_in_group("player")
     if player == null or not is_instance_valid(player):
         return
 
@@ -27,8 +27,8 @@ func _physics_process(delta: float) -> void:
         do_attack(player)
         attack_timer = 0.85 if phase == 1 else 0.55
 
-    var direction := sign(player.global_position.x - global_position.x)
-    var distance := abs(player.global_position.x - global_position.x)
+    var direction: float = sign(player.global_position.x - global_position.x)
+    var distance: float = abs(player.global_position.x - global_position.x)
 
     if distance > 160.0:
         velocity.x = direction * speed
@@ -54,7 +54,7 @@ func do_attack(player: Node) -> void:
 func spawn_support() -> void:
     var enemy_scene: PackedScene = preload("res://scenes/Enemy.tscn")
     for i in range(2):
-        var enemy = enemy_scene.instantiate()
+        var enemy: CharacterBody2D = enemy_scene.instantiate()
         enemy.enemy_type = "Runner" if i % 2 == 0 else "Scout"
         enemy.position = global_position + Vector2(120 * (i + 1) * (-1 if i == 0 else 1), -30)
         get_parent().add_child(enemy)
